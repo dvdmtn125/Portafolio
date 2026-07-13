@@ -1,0 +1,23 @@
+[project]
+name = "recibo-restaurante"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+]
+
+[project.scripts]
+mi-restaurante = "mi-restaurante.main:main"
+
+[tool.setuptools.package.find]
+where = ["."]
+include = ["mi-restaurante*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,1 @@
+"""Datos del catálogo de productos (nombres y precios)."""

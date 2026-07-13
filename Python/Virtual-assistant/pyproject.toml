@@ -1,0 +1,21 @@
+[project]
+name = "virtual-assistant"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pyaudio>=0.2.14",
+    "pyjokes>=0.8.3",
+    "pyttsx3>=2.99",
+    "pywhatkit>=5.4",
+    "speechrecognition>=3.17.0",
+    "wikipedia>=1.4.0",
+    "yfinance>=1.5.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-mock>=3.15.1",
+]

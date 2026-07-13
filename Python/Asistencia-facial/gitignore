@@ -1,0 +1,38 @@
+# --- Entornos virtuales y gestión de dependencias (uv) ---
+.venv/
+.python-version
+
+# --- Bytecode y cachés de Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# --- Distribución / empaquetado ---
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# --- Datos generados o sensibles del proyecto ---
+# El registro de ingresos se genera en tiempo de ejecución, no debe versionarse
+data/files/registro.csv
+
+# Fotos de empleados y de prueba: pueden contener datos personales,
+# se excluyen por defecto.
+data/empleados/*
+data/img/*
+!data/empleados/.gitkeep
+!data/img/.gitkeep
+
+# --- Editores e IDEs ---
+.idea/
+.vscode/
+*.swp
+
+# --- Sistema operativo ---
+.DS_Store
+Thumbs.db
+
+# --- Logs ---
+*.log

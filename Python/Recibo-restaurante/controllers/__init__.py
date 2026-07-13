@@ -1,0 +1,1 @@
+"""Controladores: conectan domain/infrastructure con la UI."""

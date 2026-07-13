@@ -1,0 +1,1 @@
+"""Operaciones de entrada/salida (guardado de archivos en disco)."""
