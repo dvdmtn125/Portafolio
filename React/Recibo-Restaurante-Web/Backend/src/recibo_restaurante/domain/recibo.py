@@ -3,6 +3,7 @@ from datetime import datetime
 
 SEPARADOR_ANCHO = 54
 SEPARADOR_ESTRELLAS = 47
+CLAVES_TOTALES_FIJOS = {'subtotal', 'iva', 'total'}
 
 
 def generar_numero_recibo() -> str:
@@ -34,9 +35,10 @@ def generar_recibo(items: dict[str, list[tuple[str, str, float]]],
                 lineas.append(f'{nombre}\t\t{cantidad}\t$ {costo}')
 
     lineas.append('-' * SEPARADOR_ANCHO)
-    lineas.append(f'Costo de la Comida: \t\t\t${calculo["comida"]}')
-    lineas.append(f'Costo de la Bebida: \t\t\t${calculo["bebida"]}')
-    lineas.append(f'Costo de los Postres: \t\t\t${calculo["postres"]}')
+    for categoria, costo in calculo.items():
+        if categoria not in CLAVES_TOTALES_FIJOS:
+            lineas.append(f'Costo de {categoria.capitalize()}: \t\t\t${costo}')
+
     lineas.append('-' * SEPARADOR_ANCHO)
     lineas.append(f'Subtotal :\t\t\t${calculo["subtotal"]}')
     lineas.append(f'Iva :\t\t\t${calculo["iva"]}')

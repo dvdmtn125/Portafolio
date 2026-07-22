@@ -41,3 +41,12 @@ def test_generar_recibo_incluye_totales():
 
     assert 'Total :' in texto
     assert '41650' in texto
+
+def test_generar_recibo_soporta_categorias_dinamicas():
+    calculo = {'bebidas': 5000, 'snacks': 3000, 'subtotal': 8000, 'iva': 1520, 'total': 9520}
+
+    texto = recibo.generar_recibo({}, calculo, numero_recibo='N# - 1234', fecha=datetime(2026, 7, 17, 14, 30))
+
+    assert 'Costo de Bebidas:' in texto
+    assert 'Costo de Snacks:' in texto
+    assert 'Total :' in texto
