@@ -4,7 +4,7 @@ import { ApiError } from "../../api/client"
 import { useDatos } from '../../context/DatosContext'
 
 export function ListaCategorias() {
-    const {categorias, cargando, recargarDatos} = useDatos()
+    const {categorias, cargando, errorCarga, recargarDatos} = useDatos()
     const [error, setError] = useState<string | null>(null)
     const [nombreNuevo, setNombreNuevo] = useState('')
 
@@ -35,8 +35,8 @@ export function ListaCategorias() {
         <div className="p-6 max-w-md mx-auto">
             <h2 className="text-2x1 font-bold text-white mb-4">Categorías</h2>
 
-            {error && (
-                <p className="bg-red-900 text-red-200 px-4 py-2 rounded mb-4">{error}</p>
+            {(errorCarga || error) && (
+                <p className="bg-red-900 text-red-200 px-4 py-2 rounded mb-4">{errorCarga ?? error}</p>
             )}
 
             <form onSubmit={manejarCrear} className="flex gap-2 mb-6">

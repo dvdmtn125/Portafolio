@@ -13,7 +13,7 @@ interface ItemPedido {
 }
 
 export function Facturacion() {
-    const {categorias, productos, cargando } = useDatos()
+    const {categorias, productos, errorCarga, cargando } = useDatos()
     const [error, setError] = useState<string | null>(null)
 
     const [categoriaId, setCategoriaId] = useState('')
@@ -105,7 +105,7 @@ export function Facturacion() {
         <div className="p-6 max-w-lg mx-auto">
             <h2 className="text-2xl font-bold text-white mb-4">Facturación</h2>
 
-            {error && <p className="bg-red-900 text-red-200 px-4 py-2 rounded mb-4">{error}</p>}
+            {(errorCarga || error) && <p className="bg-red-900 text-red-200 px-4 py-2 rounded mb-4">{errorCarga ?? error}</p>}
 
             <div className="flex flex-col gap-2 mb-4">
                 <select

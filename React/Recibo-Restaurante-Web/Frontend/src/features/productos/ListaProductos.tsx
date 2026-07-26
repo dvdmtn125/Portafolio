@@ -5,7 +5,7 @@ import { useDatos } from "../../context/DatosContext"
 import type { Producto } from "../../api/tipos"
 
 export function ListaProductos() {
-    const { categorias, productos, cargando, recargarDatos } = useDatos()
+    const { categorias, productos, cargando, errorCarga, recargarDatos } = useDatos()
     const [error, setError] = useState<string | null>(null)
 
     const [nombre, setNombre] = useState('')
@@ -74,10 +74,10 @@ export function ListaProductos() {
 
     return (
         <div className="p-6 max-w-md mx-auto">
-            <h2 className="text_2xl font-bold text-white mb-4">Productos</h2>
+            <h2 className="text-2xl font-bold text-white mb-4">Productos</h2>
 
-            {error && (
-                <p className="bg-red-900 text-red-200 px-4 py-2 rounded mb-4">{error}</p>
+            {(errorCarga || error) && (
+                <p className="bg-red-900 text-red-200 px-4 py-2 rounded mb-4">{errorCarga ?? error}</p>
             )}
 
             {!hayCategorias && (
@@ -155,7 +155,7 @@ export function ListaProductos() {
                         <div className="flex gap-3 flex-shrink-0">
                             <button
                                 onClick={() => iniciarEdicion(producto)}
-                                className="tetx-blue-400 hover:text-blue-300"
+                                className="text-blue-400 hover:text-blue-300"
                             >
                                 Editar
                             </button>

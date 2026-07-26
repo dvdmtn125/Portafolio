@@ -7,6 +7,7 @@ interface DatosContextValor {
     categorias: Categoria[]
     productos: Producto[]
     cargando: boolean
+    errorCarga: string | null    
     recargarDatos: () => Promise<void>
 }
 
@@ -16,14 +17,20 @@ export function DatosProvider({ children }: { children: ReactNode }) {
     const [categorias, setCategorias] = useState<Categoria[]>([])
     const [productos,setProductos] = useState<Producto[]>([])
     const [cargando, setCargando] = useState(true)
+    const [errorCarga, setErrorCarga] = useState<string | null>(null)
 
     async function recargarDatos() {
-        const [datosCategorias, datosProductos] = await Promise.all([
-            listarCategorias(),
-            listarProductos(),
-        ])
-        setCategorias(datosCategorias)
-        setProductos(datosProductos)
+        try {
+            const [datosCategorias, datosProductos] = await Promise.all([
+                listarCategorias(),
+                listarProductos(),
+            ])
+            setCategorias(datosCategorias)
+            setProductos(datosProductos)
+            setErrorCarga(null)
+        } catch {
+            setErrorCarga('No se pudieron cargar los datos.')
+        }
     }
 
     useEffect(() => {
@@ -31,7 +38,7 @@ export function DatosProvider({ children }: { children: ReactNode }) {
     }, [])
 
     return (
-        <DatosContext.Provider value={{ categorias, productos, cargando, recargarDatos }}>
+        <DatosContext.Provider value={{ categorias, productos, cargando, errorCarga, recargarDatos }}>
             {children}
         </DatosContext.Provider>
     )
