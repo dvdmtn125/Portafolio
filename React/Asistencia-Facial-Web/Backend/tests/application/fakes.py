@@ -2,8 +2,9 @@ from datetime import date
 
 import numpy as np
 
-from domain.entities import Persona, RegistroAsistencia, ResultadoReconocimiento
+from domain.entities import Persona, RegistroAsistencia, ResultadoReconocimiento, ResultadoLiveness
 from domain.ports import (
+    DetectorLivenessPort,
     ReconocedorFacialPort,
     RepositorioAsistenciaPort,
     RepositorioPersonasPort,
@@ -62,3 +63,13 @@ class FakeRepositorioAsistencia(RepositorioAsistenciaPort):
 
     def listar_por_fecha(self, fecha: date) -> list[RegistroAsistencia]:
         return [r for r in self._registros if r.momento.date() == fecha]
+
+
+class FakeDetectorLiveness(DetectorLivenessPort):
+    def __init__(self):
+        self.resultado_a_devolver = ResultadoLiveness(es_real=True, confianza=0.95)
+        self.imagenes_recibidas: list[bytes] = []
+
+    def analizar(self, imagen_bytes: bytes) -> ResultadoLiveness:
+        self.imagenes_recibidas.append(imagen_bytes)
+        return self.resultado_a_devolver

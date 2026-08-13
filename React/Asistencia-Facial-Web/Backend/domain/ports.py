@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from domain.entities import Persona, RegistroAsistencia, ResultadoReconocimiento
+from domain.entities import Persona, RegistroAsistencia, ResultadoReconocimiento, ResultadoLiveness
 
 
 class ReconocedorFacialPort(ABC):
@@ -41,3 +41,10 @@ class RepositorioAsistenciaPort(ABC):
 
     @abstractmethod
     def listar_por_fecha(self, fecha: "date") -> list[RegistroAsistencia]: ...
+
+
+class DetectorLivenessPort(ABC):
+    @abstractmethod
+    def analizar(self, imagen_bytes: bytes) -> ResultadoLiveness:
+        """Determina si la imagen pertenece a una persona real o a un intento de spoofing"""
+        ...

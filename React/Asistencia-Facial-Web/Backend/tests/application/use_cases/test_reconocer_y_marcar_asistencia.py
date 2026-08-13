@@ -5,8 +5,9 @@ import pytest
 from application.use_cases.reconocer_y_marcar_asistencia import (
     ReconocerYMarcarAsistencia
 )
-from domain.entities import ResultadoReconocimiento
+from domain.entities import ResultadoReconocimiento, ResultadoLiveness
 from tests.application.fakes import (
+    FakeDetectorLiveness,
     FakeReconocedorFacial,
     FakeRepositorioAsistencia,
     FakeRepositorioPersonas,
@@ -29,9 +30,14 @@ def repositorio_asistencia():
 
 
 @pytest.fixture
+def detector_liveness():
+    return FakeDetectorLiveness()
+
+
+@pytest.fixture
 def caso_de_uso(reconocedor, repositorio_personas, repositorio_asistencia):
     return ReconocerYMarcarAsistencia(
-        reconocedor, repositorio_personas, repositorio_asistencia
+        reconocedor, detector_liveness, repositorio_personas, repositorio_asistencia
     )
 
 
@@ -100,3 +106,56 @@ class TestReconocerYMarcarAsistencia:
         resultado = caso_de_uso.ejecutar(b"frame")
 
         assert resultado.confianza == 0.87
+
+    def test_no_reconoce_cuando_liveness_detecta_spoofing(
+        self, caso_de_uso, reconocedor, detector_liveness, persona_ejemplo
+    ):
+        detector_liveness.resultado_a_devolver = ResultadoLiveness(
+            es_real=False, confianza=0.9
+        )
+        reconocedor.resultado_a_devolver = ResultadoReconocimiento(
+            persona=persona_ejemplo, confinaza=0.9
+        )
+
+        resultado = caso_de_uso.ejecutar(b"foto de una foto")
+
+        assert resultado.reconocido is False
+
+    def test_no_reconoce_cuando_liveness_tiene_confianza_baja(
+        self, caso_de_uso, reconocedor, detector_liveness, persona_ejemplo
+    ):
+        detector_liveness.resultado_a_devolver = ResultadoLiveness(
+            es_real=True, confianza=0.3 # Por debajo de CONFIANZA_MINIMA_LIVENESS
+        )
+        reconocedor.resultado_a_devolver = ResultadoReconocimiento(
+            persona=persona_ejemplo, confinaza=0.9
+        )
+
+        resultado = caso_de_uso.ejecutar(b"imagen dudosa")
+
+        assert resultado.reconocido is False
+
+    def test_no_llama_reconocedor_si_liveness_rechaza_la_imagen(
+            self, caso_de_uso, reconocedor, detector_liveness
+        ):
+            detector_liveness.resultado_a_devolver = ResultadoLiveness(
+                es_real=False, confianza=0.9
+            )
+            
+            resultado = caso_de_uso.ejecutar(b"foto de una foto")
+    
+            assert reconocedor.imagenes_recibidas == [] # nunca se llegó a intentar reonocer
+
+    def test_reconoce_normalmente_cunado_liveness_aprueba(
+            self, caso_de_uso, reconocedor, detector_liveness, persona_ejemplo
+        ):
+            detector_liveness.resultado_a_devolver = ResultadoLiveness(
+                es_real=True, confianza=0.95
+            )
+            reconocedor.resultado_a_devolver = ResultadoReconocimiento(
+                persona=persona_ejemplo, confinaza=0.9
+            )
+    
+            resultado = caso_de_uso.ejecutar(b"persona real")
+    
+            assert resultado.reconocido is True
