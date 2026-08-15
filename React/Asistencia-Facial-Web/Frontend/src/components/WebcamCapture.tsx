@@ -10,6 +10,7 @@ export function WebcamCapture() {
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const streamRef = useRef<MediaStream | null>(null);
+    const procesandoRef = useRef(false);
 
     const [camaraActiva, setCamaraActiva] = useState(false);
     const [errorCamara, setErrorCamara] = useState<string | null>(null);
@@ -43,7 +44,9 @@ export function WebcamCapture() {
         setCamaraActiva(false);
     }, []);
 
-    const capturarYEnviarFrame = useCallback(() => {
+    const capturarYEnviarFrame = useCallback(async () => {
+        if (procesandoRef.current) return;
+
         const video = videoRef.current;
         const canvas = canvasRef.current;
         if (!video || !canvas) return;
@@ -56,7 +59,12 @@ export function WebcamCapture() {
         const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
         const base64Puro = dataUrl.split(",")[1];
 
-        void procesarFrame(base64Puro);
+        procesandoRef.current = true;
+        try {
+            await procesarFrame(base64Puro);
+        } finally {
+            procesandoRef.current = false;
+        }
     }, [procesarFrame]);
 
     useEffect(() => {

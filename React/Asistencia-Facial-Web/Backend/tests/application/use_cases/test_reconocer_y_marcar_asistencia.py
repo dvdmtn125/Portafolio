@@ -35,7 +35,7 @@ def detector_liveness():
 
 
 @pytest.fixture
-def caso_de_uso(reconocedor, repositorio_personas, repositorio_asistencia):
+def caso_de_uso(reconocedor, detector_liveness, repositorio_personas, repositorio_asistencia):
     return ReconocerYMarcarAsistencia(
         reconocedor, detector_liveness, repositorio_personas, repositorio_asistencia
     )
@@ -114,7 +114,7 @@ class TestReconocerYMarcarAsistencia:
             es_real=False, confianza=0.9
         )
         reconocedor.resultado_a_devolver = ResultadoReconocimiento(
-            persona=persona_ejemplo, confinaza=0.9
+            persona=persona_ejemplo, confianza=0.9
         )
 
         resultado = caso_de_uso.ejecutar(b"foto de una foto")
@@ -128,7 +128,7 @@ class TestReconocerYMarcarAsistencia:
             es_real=True, confianza=0.3 # Por debajo de CONFIANZA_MINIMA_LIVENESS
         )
         reconocedor.resultado_a_devolver = ResultadoReconocimiento(
-            persona=persona_ejemplo, confinaza=0.9
+            persona=persona_ejemplo, confianza=0.9
         )
 
         resultado = caso_de_uso.ejecutar(b"imagen dudosa")
@@ -153,7 +153,7 @@ class TestReconocerYMarcarAsistencia:
                 es_real=True, confianza=0.95
             )
             reconocedor.resultado_a_devolver = ResultadoReconocimiento(
-                persona=persona_ejemplo, confinaza=0.9
+                persona=persona_ejemplo, confianza=0.9
             )
     
             resultado = caso_de_uso.ejecutar(b"persona real")

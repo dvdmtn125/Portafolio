@@ -7,6 +7,7 @@ from application.use_cases.reconocer_y_marcar_asistencia import (
     ReconocerYMarcarAsistencia,
 )
 from application.use_cases.registrar_persona import RegistrarPersona
+from infrastructure.deepface_liveness_adapter import DeepfaceAntispoofingAdapter
 from infrastructure.face_recognition_adapter import FaceRecognitionAdapter
 from infrastructure.sqlalchemy_repositories import (
     RepositorioAsistenciaSQLAlchemy,
@@ -36,13 +37,18 @@ def _repositorio_asistencia() -> RepositorioAsistenciaSQLAlchemy:
     return RepositorioAsistenciaSQLAlchemy(_session_factory())
 
 
+@lru_cache
+def _detector_liveness() -> DeepfaceAntispoofingAdapter:
+    return DeepfaceAntispoofingAdapter()
+
+
 def get_registrar_persona() -> RegistrarPersona:
     return RegistrarPersona(_reconocedor(), _repositorio_personas())
 
 
 def get_reconocer_y_marcar_asistencia() -> ReconocerYMarcarAsistencia:
     return ReconocerYMarcarAsistencia(
-        _reconocedor(), _repositorio_personas(), _repositorio_asistencia()
+        _reconocedor(), _detector_liveness(), _repositorio_personas(), _repositorio_asistencia()
     )
 
 
